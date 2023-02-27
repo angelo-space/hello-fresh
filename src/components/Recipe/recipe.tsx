@@ -1,30 +1,36 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import {
+  RecipeComponentType,
+  RecipeDetailsComponentType,
+  RecipeType,
+} from "../../global/types";
 
-const Recipe = ({ recipes, origin }: any) => {
-  const [recipeDetails, openRecipeDetails] = useState() as any;
-  const [recipeNutriImg, setRecipeNutriImg] = useState() as any;
+const Recipe = ({ recipes, origin }: RecipeComponentType) => {
+  const [recipeDetails, setRecipeDetails] = useState({} as RecipeType);
+  const [recipeNutriImg, setRecipeNutriImg] = useState("");
+  const [recipePreview, setRecipePreview] = useState(false);
 
-  const fetchRecipeDetails = async (id: any) => {
+  const fetchRecipeDetails = async (id: number) => {
     try {
       const data = await fetch(
         `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${process.env.REACT_APP_RECIPE_KEY}`
       );
       const recipeInfo = await data.json();
 
-      openRecipeDetails(recipeInfo);
+      setRecipeDetails(recipeInfo);
     } catch (error) {
       console.log("%cAttempts to get recipe details failed.", "color: crimson");
     }
   };
 
-  const fetchRecipeNutriFacts = async (id: any) => {
+  const fetchRecipeNutriFacts = async (id: number) => {
     try {
       const imageData = await fetch(
         `https://api.spoonacular.com/recipes/${id}/nutritionLabel.png?&apiKey=${process.env.REACT_APP_RECIPE_KEY}`
       );
 
       const imageBlob = await imageData.blob();
-      const imageObjectURL = URL.createObjectURL(imageBlob as any);
+      const imageObjectURL = URL.createObjectURL(imageBlob);
       setRecipeNutriImg(imageObjectURL);
     } catch (error) {
       console.log(
@@ -37,12 +43,13 @@ const Recipe = ({ recipes, origin }: any) => {
   return (
     <>
       {origin === "fromSearch" &&
-        recipes.map((recipe: any) => (
+        recipes.map((recipe) => (
           <button
             key={recipe.id}
             onClick={() => {
               fetchRecipeDetails(recipe.id);
               fetchRecipeNutriFacts(recipe.id);
+              setRecipePreview(true);
             }}
           >
             <img src={recipe.image} alt={recipe.title} />
@@ -51,12 +58,13 @@ const Recipe = ({ recipes, origin }: any) => {
         ))}
 
       {origin === "fromPopular" &&
-        recipes.map((recipe: any) => (
+        recipes.map((recipe) => (
           <button
             key={recipe.id}
             onClick={() => {
-              openRecipeDetails(recipe);
+              setRecipeDetails(recipe);
               fetchRecipeNutriFacts(recipe.id);
+              setRecipePreview(true);
             }}
           >
             <img src={recipe.image} alt={recipe.title} />
@@ -64,21 +72,27 @@ const Recipe = ({ recipes, origin }: any) => {
           </button>
         ))}
 
-      {recipeDetails && (
-        <RecipeDetails
-          viewRecipe={recipeDetails}
-          modalBehavior={openRecipeDetails}
-          nutriImg={recipeNutriImg}
-        />
-      )}
+      {recipePreview &&
+        recipeNutriImg &&
+        Object.keys(recipeDetails).length > 0 && (
+          <RecipeDetails
+            viewRecipe={recipeDetails}
+            modalBehavior={setRecipePreview}
+            nutriImg={recipeNutriImg}
+          />
+        )}
     </>
   );
 };
 
-const RecipeDetails = ({ viewRecipe, modalBehavior, nutriImg }: any) => {
+const RecipeDetails = ({
+  viewRecipe,
+  modalBehavior,
+  nutriImg,
+}: RecipeDetailsComponentType) => {
   return (
     <div>
-      <button onClick={() => modalBehavior()}>Close</button>
+      <button onClick={() => modalBehavior(false)}>Close</button>
       <h1>{viewRecipe.title}</h1>
       <img src={viewRecipe.image} alt={viewRecipe.title} />
 
@@ -86,16 +100,18 @@ const RecipeDetails = ({ viewRecipe, modalBehavior, nutriImg }: any) => {
 
       <div>
         <ul>
-          {viewRecipe.extendedIngredients.map((ing: any) => (
-            <li key={ing.id}>{ing.original}</li>
+          {viewRecipe.extendedIngredients.map((ingredient) => (
+            <li key={ingredient.original}>{ingredient.original}</li>
           ))}
         </ul>
       </div>
 
       <div>
         <ol>
-          {viewRecipe.analyzedInstructions[0].steps.map((ing: any) => (
-            <li key={ing.number}>{`${ing.number}. ${ing.step}`}</li>
+          {viewRecipe.analyzedInstructions[0].steps.map((ingredient) => (
+            <li
+              key={ingredient.number}
+            >{`${ingredient.number}. ${ingredient.step}`}</li>
           ))}
         </ol>
       </div>
