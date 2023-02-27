@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Loading, Recipe } from "..";
+import { RecipeType } from "../../global/types";
 
 const Popular = () => {
   const date = new Date();
   const today = date.getDate().toLocaleString();
 
-  const [popRecipes, setPopRecipes] = useState() as any;
+  const [popRecipes, setPopRecipes] = useState<Array<RecipeType>>([]);
 
   const getRecipes = async () => {
     try {

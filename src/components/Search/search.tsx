@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, MutableRefObject, useRef, useState } from "react";
 import { Loading, Recipe } from "..";
+import { RecipeType } from "../../global/types";
 
 const Search = () => {
-  const queryRef = useRef() as any;
   const [query, setQuery] = useState("name");
   const [sort, setSort] = useState("meta-score");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<Array<RecipeType>>([]);
+  const queryRef = useRef() as MutableRefObject<HTMLInputElement>;
 
-  const findRecipes = async (e: any) => {
+  const findRecipes = async (e: FormEvent) => {
     e.preventDefault();
 
     switch (query) {
