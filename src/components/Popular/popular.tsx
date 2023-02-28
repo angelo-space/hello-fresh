@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Loading, Recipe } from "..";
 import { RecipeType } from "../../global/types";
+import "./popular.css";
 
 const Popular = () => {
   const date = new Date();
@@ -34,16 +35,18 @@ const Popular = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!popRecipes) {
+    return <Loading />;
+  }
+
   return (
     <>
-      {popRecipes ? (
-        <section>
-          <h1>Popular Recipes</h1>
+      {popRecipes.length && (
+        <section className="popular-container">
+          <h2>Popular Recipes</h2>
 
           <Recipe recipes={popRecipes} origin="fromPopular" />
         </section>
-      ) : (
-        <Loading />
       )}
     </>
   );
