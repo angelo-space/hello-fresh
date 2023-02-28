@@ -4,3 +4,24 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
+:root {
+  --gray: rgba(175, 170, 170, 0.9);
+  --light-gray: rgba(215, 206, 206, 0.9);
+  --darker-gray: rgba(79, 71, 71, 0.9);
+  --fresh-green: #a5e887;
+  --darker-green: #00cc76;
+  --plain-white: white;
+
+  --fontsize-tiny: 0.9rem;
+  --fontsize-1: 1rem;
+  --fontsize-2: 2rem;
+  --fontsize-3: 3rem;
+  --fontsize-4: 4rem;
+  --fontsize-5: 5rem;
+}
+
+button {
+  border: none;
+  background: none;
+}

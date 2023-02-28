@@ -1,0 +1,14 @@
+.popular-container {
+  margin-top: 2em;
+}
+
+.popular-container h2 {
+  text-align: center;
+  font-weight: 500;
+}
+
+@media only screen and (min-width: 750px) {
+  .popular-container {
+    margin-top: 10em;
+  }
+}
